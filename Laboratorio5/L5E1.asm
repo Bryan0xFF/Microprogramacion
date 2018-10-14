@@ -41,7 +41,13 @@ num1 db ?
     loop base_8
     
     invertir:
-    mov dl, al ;mueve el cociente
+    mov dl, al
+    mov dh, ah
+    
+    mov ah, 00h
+    mov al, 02h
+    int 10h
+    
     add dl, 30h ;suma es ascii
     mov ah, 02h
     int 21h
@@ -50,12 +56,6 @@ num1 db ?
     mov ah, 02h
     int 21h
     
-    
-    ;mov ah, 00h
-    ;mov al, 02h
-    ;int 10h
-    
-
     mov ah, 4ch
     int 21h
     END programa
