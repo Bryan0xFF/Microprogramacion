@@ -1,0 +1,95 @@
+.MODEL SMALL
+.DATA
+.STACK
+CAD1 DB 100 DUP('$')
+CAD2 DB 100 DUP('$')
+MSG1 DB 'INGRESE CADENA 1: $'
+MSG2 DB 'INGRESE CADENA 2: $'
+IGUAL DB 'LAS CADENAS SON IGUALES$'
+.CODE
+    PROGRAMA:
+    MOV AX, @DATA
+    MOV DS,AX
+    
+    LEA DX, MSG1
+    MOV AH, 09H
+    INT 21H
+    
+    CALL NEWLINE
+    
+    LEA SI, CAD1
+    LEA DI, CAD2
+    
+    CADENA1:
+    XOR AX,AX
+    MOV AH, 01H
+    INT 21H
+    CMP AL, 0DH
+    JE IMPRIMIR_CAD2
+    MOV CAD1[SI], AL
+    INC SI
+    JMP CADENA1
+    
+    IMPRIMIR_CAD2:
+    CALL NEWLINE
+    LEA DX, MSG2
+    MOV AH, 09H
+    INT 21H
+    CALL NEWLINE
+    JMP CADENA2
+    
+    CADENA2:
+    XOR AX,AX
+    MOV AH, 01H
+    INT 21H
+    CMP AL, 0DH
+    JE COMPARAR_INTERMEDIO
+    MOV CAD2[DI], AL
+    INC DI
+    JMP CADENA2
+
+    COMPARAR_INTERMEDIO:
+    INC SI
+    INC DI
+    MOV CAD1[SI], '$'
+    MOV CAD2[DI], '$'
+    LEA SI, CAD1
+    LEA DI, CAD2
+    JMP COMPARAR
+    
+    COMPARAR:
+    XOR BX,BX
+    XOR AX,AX
+    MOV BL, CAD1[SI]
+    MOV CL, CAD2[DI]
+    CMP BL,CL
+    JNZ EXIT
+    INC SI
+    INC DI
+    CMP CAD1[SI], 24H
+    JE  RESULTADO
+    JMP COMPARAR
+    
+    RESULTADO:
+    XOR DX,DX
+    MOV DX, OFFSET IGUAL
+    MOV AH, 09H
+    INT 21H
+    JMP EXIT
+    
+    EXIT:
+    MOV AH, 4CH
+    INT 21H
+    
+    
+    NEWLINE PROC NEAR
+    MOV DL, 10
+    MOV AH, 02h
+    INT 21h
+    MOV DL, 13
+    MOV AH, 02h
+    INT 21H
+    RET
+    NEWLINE ENDP
+    
+    END PROGRAMA
